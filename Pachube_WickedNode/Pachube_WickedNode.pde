@@ -32,8 +32,8 @@
 // change the template to be consistent with your datastreams: see http://api.pachube.com/v2/
 #define FEED_POST_MAX_LENGTH 256
 static char feedTemplate[] = "{\"version\":\"1.0.0\",\"datastreams\":[{\"id\":\"sensor1\", \"current_value\":\"%d\"},{\"id\":\"sensor2\",\"current_value\":\"%d\"}]}";
-static char feedPost[FEED_POST_MAX_LENGTH] = {0}; // this will hold your filled out template
-uint8_t fillOutTemplateWithSensorValues(uint8_t node_id, uint8_t sensorValue1, uint8_t sensorValue2, uint8_t sensorValue3, uint8_t sensorValue4){
+//static char feedPost[FEED_POST_MAX_LENGTH] = {0}; // this will hold your filled out template
+static char feedPost[FEED_POST_MAX_LENGTH] = "{\"version\":\"1.0.0\",\"datastreams\":[{\"id\":\"0\", \"current_value\":\"234234234\"},{\"id\":\"1\",\"current_value\":\"234324324\"}]}";
   // change this function to be consistent with your feed template, it will be passed the node id and four sensor values by the sketch
   // if you return (1) this the sketch will post the contents of feedPost to Pachube, if you return (0) it will not post to Pachube
   // you may use as much of the passed information as you need to fill out the template
@@ -125,6 +125,11 @@ void loop(){
   es.ES_packetloop_icmp_tcp(buf,plen);
   
   int sensorValue = 0;
+  es.ES_client_http_post(PSTR(HTTPFEEDPATH),PSTR(FEEDWEBSERVER_VHOST),PSTR(FEEDHOSTNAME), PSTR("PUT "), feedPost, &sensor_feed_post_callback);
+  Serial.println("Posting to Pachube");
+  delay(10000);
+  
+  /*
   if(getWirelessSensorData()){
     uint8_t node_id      = receiver.getDecodedNodeId();
     uint8_t sensorValue1 = receiver.getDecodedSensor1();
@@ -136,7 +141,7 @@ void loop(){
     if(fillOutTemplateWithSensorValues(node_id, sensorValue1, sensorValue2, sensorValue3, sensorValue4)){
       es.ES_client_http_post(PSTR(HTTPFEEDPATH),PSTR(FEEDWEBSERVER_VHOST),PSTR(FEEDHOSTNAME), PSTR("PUT "), feedPost, &sensor_feed_post_callback);    
     }
-  }  
+  }*/ 
 }
 
 #ifdef USE_DHCP
